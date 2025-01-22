@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
 
-export const budgetValidation = [
+export const createBudgetValidator = [
 	body('name').notEmpty().withMessage("Name can't be empty."),
 	body('amount')
 		.notEmpty()

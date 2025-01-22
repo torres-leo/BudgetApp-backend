@@ -1,4 +1,4 @@
-import { request, type Request, type Response } from 'express';
+import type { Request, Response } from 'express';
 import Budget from '../models/Budget';
 
 export class BudgetController {
@@ -7,6 +7,7 @@ export class BudgetController {
 			const budgets = await Budget.findAll({
 				order: [['createdAt', 'DESC']],
 			});
+
 			res.json(budgets);
 		} catch (error) {
 			console.log(error);
@@ -15,7 +16,7 @@ export class BudgetController {
 	}
 
 	static async getById(req: Request, res: Response) {
-		console.log('Get by ID');
+		res.json(req.budget);
 	}
 
 	static async create(req: Request, res: Response) {
@@ -30,10 +31,12 @@ export class BudgetController {
 	}
 
 	static async update(req: Request, res: Response) {
-		console.log('Update budget');
+		await req.budget.update(req.body);
+		res.json('Budget updated sucessfully');
 	}
 
 	static async delete(req: Request, res: Response) {
-		console.log('Delete budget');
+		await req.budget.destroy();
+		res.json('Budget deleted sucessfully');
 	}
 }
