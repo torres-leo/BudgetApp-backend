@@ -1,16 +1,16 @@
 import type { Request, Response, NextFunction } from 'express';
 import { body, param, validationResult } from 'express-validator';
-import Budget from '../models/Budget';
+import Expense from '../models/Expense';
 
 declare global {
 	namespace Express {
 		interface Request {
-			budget?: Budget;
+			expense?: Expense;
 		}
 	}
 }
 
-export const budgetInfoValidator = async (req: Request, res: Response, next: NextFunction) => {
+export const expenseInfoValidator = async (req: Request, res: Response, next: NextFunction) => {
 	await body('name').notEmpty().withMessage("Name can't be empty.").run(req);
 	await body('amount')
 		.notEmpty()
@@ -24,12 +24,12 @@ export const budgetInfoValidator = async (req: Request, res: Response, next: Nex
 	next();
 };
 
-export const budgetIdValidator = async (req: Request, res: Response, next: NextFunction) => {
-	await param('budgetId')
+export const expenseIdValidator = async (req: Request, res: Response, next: NextFunction) => {
+	await param('expenseId')
 		.isInt()
-		.withMessage('Invalid budget id.')
+		.withMessage('Invalid expense id.')
 		.custom((value) => value > 0)
-		.withMessage('Invalid budget id.')
+		.withMessage('Invalid expense id.')
 		.run(req);
 
 	let errors = validationResult(req);
@@ -41,18 +41,18 @@ export const budgetIdValidator = async (req: Request, res: Response, next: NextF
 	next();
 };
 
-export const budgetExistValidator = async (req: Request, res: Response, next: NextFunction) => {
+export const expenseExistValidator = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const { budgetId } = req.params;
+		const { expenseId } = req.params;
 
-		const budget = await Budget.findByPk(budgetId);
+		const expense = await Expense.findByPk(expenseId);
 
-		if (!budget) {
-			res.status(404).json({ message: 'Budget not found' });
+		if (!expense) {
+			res.status(404).json({ message: 'Expense not found' });
 			return;
 		}
 
-		req.budget = budget;
+		req.expense = expense;
 
 		next();
 	} catch (error) {
