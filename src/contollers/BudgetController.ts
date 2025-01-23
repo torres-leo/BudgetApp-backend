@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import Budget from '../models/Budget';
+import Expense from '../models/Expense';
 
 export class BudgetController {
 	static async getAll(req: Request, res: Response) {
@@ -16,7 +17,9 @@ export class BudgetController {
 	}
 
 	static async getById(req: Request, res: Response) {
-		res.json(req.budget);
+		const budget = await Budget.findByPk(req.budget.id, { include: [Expense] });
+
+		res.json(budget);
 	}
 
 	static async create(req: Request, res: Response) {
