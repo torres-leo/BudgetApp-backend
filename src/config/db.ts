@@ -10,3 +10,4 @@ export const db = new Sequelize(process.env.DATABASE_URL, {
 });
 
 db.sync({ alter: true });
+// db.sync({ force: true });
