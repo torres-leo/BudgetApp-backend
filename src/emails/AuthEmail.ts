@@ -18,4 +18,16 @@ export class AuthEmail {
 
 		console.log('Email sent: %s', email.messageId);
 	}
+
+	static async sendResetPasswordToken(user: EmailType) {
+		const email = await transport.sendMail({
+			from: 'BudgetApp <admin@budgetapp.com>',
+			to: user.email,
+			subject: 'BudgetApp - Reset Password',
+			html: `<h1>Hello ${user.name},</h1><p>Click <a href="#">here</a> to reset your password</p>
+      <p>Enter the token: <b>${user.token}</b></p>`,
+		});
+
+		console.log('Email sent: %s', email.messageId);
+	}
 }
