@@ -3,15 +3,20 @@ import { Router } from 'express';
 import { BudgetController } from '../contollers/BudgetController';
 import { ExpensesController } from '../contollers/ExpenseController';
 
-import { budgetExistValidator, budgetIdValidator, budgetInfoValidator } from '../middleware/budget';
+import { budgetExistValidator, budgetIdValidator, budgetInfoValidator, hasAccess } from '../middleware/budget';
 import { expenseExistValidator, expenseIdValidator, expenseInfoValidator } from '../middleware/expense';
 import { handleInputErrors } from '../middleware/validation';
+import { authenticate } from '../middleware/auth';
 
 const router = Router();
+
+router.use(authenticate);
 
 // Every time we use the id parameter in a route, we need to validate it.
 router.param('budgetId', budgetIdValidator);
 router.param('budgetId', budgetExistValidator);
+
+router.param('budgetId', hasAccess);
 
 router.param('expenseId', expenseIdValidator);
 router.param('expenseId', expenseExistValidator);

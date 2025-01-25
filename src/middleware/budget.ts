@@ -60,3 +60,12 @@ export const budgetExistValidator = async (req: Request, res: Response, next: Ne
 		res.status(500).json({ message: 'Server Error' });
 	}
 };
+
+export const hasAccess = (req: Request, res: Response, next: NextFunction) => {
+	if (req.budget.id !== req.user.id) {
+		res.status(401).json({ message: 'Invalid action' });
+		return;
+	}
+
+	next();
+};
