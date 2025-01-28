@@ -7,7 +7,7 @@ jest.mock('../../../models/Budget', () => ({
 	findByPk: jest.fn(),
 }));
 
-describe('budget middleware- budgetExistValidator', () => {
+describe('Budget middleware- budgetExistValidator', () => {
 	it('Should handle non-existing budget', async () => {
 		(Budget.findByPk as jest.Mock).mockResolvedValue(null);
 
