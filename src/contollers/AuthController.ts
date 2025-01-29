@@ -13,19 +13,19 @@ export class AuthController {
 		const userExist = await User.findOne({ where: { email } });
 
 		if (userExist) {
-			res.status(409).json({ message: 'Email is already use.' });
+			res.status(409).json({ message: 'Email is already use' });
 			return;
 		}
 
 		try {
-			const user = new User(req.body);
+			const user = await User.create(req.body);
 			user.password = await hashPassword(req.body.password);
 			user.token = generateToken();
 
 			await user.save();
 			await AuthEmail.sendConfirmationEmail({ email: user.email, name: user.name, token: user.token });
 
-			res.json('User created successfully');
+			res.status(201).json('User created successfully');
 		} catch (error) {
 			console.log(error);
 			res.status(500).json({ message: 'Server Error' });
@@ -55,24 +55,24 @@ export class AuthController {
 		const user = await User.findOne({ where: { email } });
 
 		if (!user) {
-			res.status(404).json({ message: 'Email not found.' });
+			res.status(404).json({ message: 'Email not found' });
 			return;
 		}
 
 		if (!user.confirmed) {
-			res.status(403).json({ message: 'This account has not yet been confirmed.' });
+			res.status(403).json({ message: 'This account has not yet been confirmed' });
 			return;
 		}
 
 		const isPasswordCorrect = await checkPassword(password, user.password);
 
 		if (!isPasswordCorrect) {
-			res.status(401).json({ message: 'Invalid password.' });
+			res.status(401).json({ message: 'Invalid password' });
 			return;
 		}
 
 		const token = generateJWT(user.id);
-		res.json(token);
+		res.status(200).json(token);
 	}
 
 	static async forgotPassword(req: Request, res: Response) {
@@ -81,7 +81,7 @@ export class AuthController {
 		const user = await User.findOne({ where: { email } });
 
 		if (!user) {
-			res.status(404).json({ message: 'Email not found.' });
+			res.status(404).json({ message: 'Email not found' });
 			return;
 		}
 
@@ -89,7 +89,7 @@ export class AuthController {
 		await user.save();
 		await AuthEmail.sendResetPasswordToken({ email: user.email, name: user.name, token: user.token });
 
-		res.json("We've sent you an email with instructions to reset your password.");
+		res.json("We've sent you an email with instructions to reset your password");
 	}
 
 	static async validateToken(req: Request, res: Response) {
@@ -97,7 +97,7 @@ export class AuthController {
 
 		const tokenExist = await User.findOne({ where: { token } });
 		if (!tokenExist) {
-			res.status(404).json({ message: 'Email not found.' });
+			res.status(404).json({ message: 'Email not found' });
 			return;
 		}
 
@@ -110,7 +110,7 @@ export class AuthController {
 
 		const user = await User.findOne({ where: { token } });
 		if (!user) {
-			res.status(404).json({ message: 'Invalid Token.' });
+			res.status(404).json({ message: 'Invalid Token' });
 			return;
 		}
 
@@ -134,7 +134,7 @@ export class AuthController {
 		const isPasswordCorrect = await checkPassword(current_password, user.password);
 
 		if (!isPasswordCorrect) {
-			res.status(401).json({ message: 'Invalid password.' });
+			res.status(401).json({ message: 'Invalid password' });
 			return;
 		}
 
@@ -153,7 +153,7 @@ export class AuthController {
 		const isPasswordCorrect = await checkPassword(password, user.password);
 
 		if (!isPasswordCorrect) {
-			res.status(401).json({ message: 'Invalid password.' });
+			res.status(401).json({ message: 'Invalid password' });
 			return;
 		}
 
