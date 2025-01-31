@@ -16,9 +16,9 @@ export const expenseInfoValidator = async (req: Request, res: Response, next: Ne
 		.notEmpty()
 		.withMessage("Amount can't be empty.")
 		.isNumeric()
-		.withMessage('Invalid amount.')
+		.withMessage('Invalid amount')
 		.custom((value) => value > 0)
-		.withMessage('Amount must be greater than 0.')
+		.withMessage('Amount must be greater than 0')
 		.run(req);
 
 	next();
@@ -27,9 +27,9 @@ export const expenseInfoValidator = async (req: Request, res: Response, next: Ne
 export const expenseIdValidator = async (req: Request, res: Response, next: NextFunction) => {
 	await param('expenseId')
 		.isInt()
-		.withMessage('Invalid expense id.')
+		.withMessage('Invalid expense id')
 		.custom((value) => value > 0)
-		.withMessage('Invalid expense id.')
+		.withMessage('Invalid expense id')
 		.run(req);
 
 	let errors = validationResult(req);

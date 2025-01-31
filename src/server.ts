@@ -6,7 +6,7 @@ import { db } from './config/db';
 import budgetRouter from './routes/budgetRoute';
 import authRouter from './routes/authRouter';
 
-async function connectDB() {
+export async function connectDB() {
 	try {
 		await db.authenticate();
 		db.sync();
@@ -26,5 +26,9 @@ app.use(express.json());
 
 app.use('/api/budgets', budgetRouter);
 app.use('/api/auth', authRouter);
+
+app.get('/', (req, res) => {
+	res.json({ message: 'Everything fine' });
+});
 
 export default app;

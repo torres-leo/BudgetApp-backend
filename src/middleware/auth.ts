@@ -15,14 +15,14 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 	const bearer = req.headers.authorization;
 
 	if (!bearer) {
-		res.status(401).json({ message: 'Unauthorized.' });
+		res.status(401).json({ message: 'Unauthorized' });
 		return;
 	}
 
 	const [text, token] = bearer.split(' ');
 
 	if (!token) {
-		res.status(401).json({ message: 'Invalid token.' });
+		res.status(401).json({ message: 'Invalid token' });
 		return;
 	}
 

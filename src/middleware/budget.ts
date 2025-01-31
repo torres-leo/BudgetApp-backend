@@ -16,9 +16,9 @@ export const budgetInfoValidator = async (req: Request, res: Response, next: Nex
 		.notEmpty()
 		.withMessage("Amount can't be empty.")
 		.isNumeric()
-		.withMessage('Invalid amount.')
+		.withMessage('Invalid amount')
 		.custom((value) => value > 0)
-		.withMessage('Amount must be greater than 0.')
+		.withMessage('Amount must be greater than 0')
 		.run(req);
 
 	next();
@@ -27,9 +27,9 @@ export const budgetInfoValidator = async (req: Request, res: Response, next: Nex
 export const budgetIdValidator = async (req: Request, res: Response, next: NextFunction) => {
 	await param('budgetId')
 		.isInt()
-		.withMessage('Invalid budget id.')
+		.withMessage('Invalid budget id')
 		.custom((value) => value > 0)
-		.withMessage('Invalid budget id.')
+		.withMessage('Invalid budget id')
 		.run(req);
 
 	let errors = validationResult(req);
