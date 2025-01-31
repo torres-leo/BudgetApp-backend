@@ -20,8 +20,13 @@ export class AuthController {
 		try {
 			const user = await User.create(req.body);
 			user.password = await hashPassword(req.body.password);
-			user.token = generateToken();
+			const token = generateToken();
 
+			if (process.env.NODE_ENV !== 'production') {
+				globalThis.BudgeAppConfirmationToken = token;
+			}
+
+			user.token = token;
 			await user.save();
 			await AuthEmail.sendConfirmationEmail({ email: user.email, name: user.name, token: user.token });
 
