@@ -25,6 +25,11 @@ export class BudgetController {
 
 	static async create(req: Request, res: Response) {
 		try {
+			if (!req.body) {
+				res.status(400).json('Inputs are required');
+				return;
+			}
+
 			const budget = await Budget.create(req.body);
 			budget.userId = req.user.id;
 
