@@ -28,8 +28,10 @@ export const budgetIdValidator = async (req: Request, res: Response, next: NextF
 	await param('budgetId')
 		.isInt()
 		.withMessage('Invalid budget id')
+		.bail()
 		.custom((value) => value > 0)
 		.withMessage('Invalid budget id')
+		.bail()
 		.run(req);
 
 	let errors = validationResult(req);

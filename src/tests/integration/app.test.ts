@@ -198,3 +198,67 @@ describe('Authentication - Login', () => {
 		expect(generateJWT).toHaveBeenCalledTimes(1);
 	});
 });
+
+let jwt: string;
+async function authenticateUser() {
+	const user = { email: 'test@test.com', password: '12345678' };
+	const response = await request(server).post('/api/auth/login').send(user);
+	jwt = response.body;
+
+	console.log(jwt);
+
+	expect(response.statusCode).toBe(200);
+}
+
+describe('GET /api/budgets', () => {
+	beforeAll(() => {
+		jest.restoreAllMocks();
+	});
+
+	beforeAll(async () => {
+		await authenticateUser();
+	});
+
+	it('Should reject unauthenticated access to budgets without a jwt', async () => {
+		const response = await request(server).get('/api/budgets');
+
+		expect(response.statusCode).toBe(401);
+		expect(response.body.message).toBe('Unauthorized');
+	});
+
+	it('Should reject unauthenticated access to budgets without a valid jwt', async () => {
+		const response = await request(server).get('/api/budgets').auth('not_valid', { type: 'bearer' });
+
+		expect(response.statusCode).toBe(500);
+		expect(response.body.message).toBe('Unauthorized');
+	});
+
+	it('Should allow authenticated acces to budgets with a valid jwt', async () => {
+		const response = await request(server).get('/api/budgets').auth(jwt, { type: 'bearer' });
+
+		expect(response.statusCode).not.toBe(401);
+		expect(response.body).toHaveLength(0);
+	});
+});
+
+describe('POST /api/budgets', () => {
+	beforeAll(async () => {
+		await authenticateUser();
+	});
+
+	it('Should reject unauthenticated post request to budgets without a jwt', async () => {
+		const response = await request(server).post('/api/budgets');
+
+		expect(response.statusCode).toBe(401);
+		expect(response.body.message).toBe('Unauthorized');
+	});
+
+	it('Should display validation when the form is submitted with invalid data', async () => {
+		const response = await request(server).post('/api/budgets').send({});
+
+		expect(response.statusCode).toBe(400);
+		expect(response.statusCode).not.toBe(200);
+		expect(response.body).toHaveProperty('errors');
+		expect(response.body).toHaveLength(4);
+	});
+});
