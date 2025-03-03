@@ -13,7 +13,7 @@ export class AuthController {
 		const userExist = await User.findOne({ where: { email } });
 
 		if (userExist) {
-			res.status(409).json({ message: 'Email is already use' });
+			res.status(409).json({ message: 'Email is already in use' });
 			return;
 		}
 
@@ -21,12 +21,12 @@ export class AuthController {
 			const user = await User.create(req.body);
 			user.password = await hashPassword(req.body.password);
 			const token = generateToken();
+			user.token = token;
 
 			if (process.env.NODE_ENV !== 'production') {
 				globalThis.BudgeAppConfirmationToken = token;
 			}
 
-			user.token = token;
 			await user.save();
 			await AuthEmail.sendConfirmationEmail({ email: user.email, name: user.name, token: user.token });
 
@@ -60,7 +60,7 @@ export class AuthController {
 		const user = await User.findOne({ where: { email } });
 
 		if (!user) {
-			res.status(404).json({ message: 'Email not found' });
+			res.status(404).json({ message: 'Email is not registered' });
 			return;
 		}
 
@@ -72,7 +72,7 @@ export class AuthController {
 		const isPasswordCorrect = await checkPassword(password, user.password);
 
 		if (!isPasswordCorrect) {
-			res.status(401).json({ message: 'Invalid password' });
+			res.status(401).json({ message: 'Password is incorrect' });
 			return;
 		}
 
@@ -102,11 +102,11 @@ export class AuthController {
 
 		const tokenExist = await User.findOne({ where: { token } });
 		if (!tokenExist) {
-			res.status(404).json({ message: 'Email not found' });
+			res.status(404).json({ message: 'Invalid token' });
 			return;
 		}
 
-		res.json('Token is valid');
+		res.json('Token is valid. Now you can change your password');
 	}
 
 	static async resetPasswordWithToken(req: Request, res: Response) {
@@ -123,7 +123,7 @@ export class AuthController {
 		user.token = null;
 
 		await user.save();
-		res.json('Password reset successfully');
+		res.json('the password was updated successfully');
 	}
 
 	static async getUser(req: Request, res: Response) {
