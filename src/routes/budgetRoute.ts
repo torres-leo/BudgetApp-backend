@@ -1,12 +1,11 @@
 import { Router } from 'express';
 
-import { BudgetController } from '../contollers/BudgetController';
-import { ExpensesController } from '../contollers/ExpenseController';
-
-import { budgetExistValidator, budgetIdValidator, budgetInfoValidator, hasAccess } from '../middleware/budget';
-import { expenseExistValidator, expenseIdValidator, expenseInfoValidator } from '../middleware/expense';
-import { handleInputErrors } from '../middleware/validation';
 import { authenticate } from '../middleware/auth';
+import { belongsToBudget, expenseExistValidator, expenseIdValidator, expenseInfoValidator } from '../middleware/expense';
+import { BudgetController } from '../contollers/BudgetController';
+import { budgetExistValidator, budgetIdValidator, budgetInfoValidator, hasAccess } from '../middleware/budget';
+import { ExpensesController } from '../contollers/ExpenseController';
+import { handleInputErrors } from '../middleware/validation';
 
 const router = Router();
 
@@ -20,6 +19,7 @@ router.param('budgetId', hasAccess);
 
 router.param('expenseId', expenseIdValidator);
 router.param('expenseId', expenseExistValidator);
+router.param('expenseId', belongsToBudget);
 
 // Routes
 router.get('/', BudgetController.getAll);
